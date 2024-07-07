@@ -21,7 +21,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => console.log("db connected")).
 
   
 
-const endpointSecret = "whsec_uLOhE2Qo1XdD87Y571rkBizD2EYKf9eb";
+const endpointSecret = "whsec_WkHz7siBtaOWjdxLjCPoeepvNvxhH6u0";
 
 
 
