@@ -67,7 +67,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (request, respon
             const newOrder = new Order({
               userId: customer.metadata.userId,
               customerId: checkoutData.customer,
-              productId: products[0].productId,
+              productId: products.productId,
               quantity: products[0].quantity,
               subtotal: checkoutData.amount_subtotal/100,
               total: checkoutData.amount_total/100,
