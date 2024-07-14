@@ -56,24 +56,21 @@ app.post(
                 };
               });
 
-              products.forEach(async (product) => {
-                const newOrder = new Order({
-                  userId: customer.metadata.userId,
-                  customerId: checkoutData.customer,
-                  productId: product.productId,
-                  quantity: product.quantity,
-                  subtotal: checkoutData.amount_subtotal / 100,
-                  total: checkoutData.amount_total / 100,
-                  payment_status: checkoutData.payment_status,
-                });
-
-                try {
-                  await newOrder.save();
-                  console.log('Order processed for product:', product.productId);
-                } catch (err) {
-                  console.log(err);
-                }
+              const newOrder = new Order({
+                userId: customer.metadata.userId,
+                customerId: checkoutData.customer,
+                products: products,
+                subtotal: checkoutData.amount_subtotal / 100,
+                total: checkoutData.amount_total / 100,
+                payment_status: checkoutData.payment_status,
               });
+
+              try {
+                await newOrder.save();
+                console.log('Order processed');
+              } catch (err) {
+                console.log(err);
+              }
             } catch (err) {
               console.log(err);
             }
