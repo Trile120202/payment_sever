@@ -17,6 +17,32 @@ mongoose
   .then(() => console.log('db connected'))
   .catch((err) => console.log(err));
 
+  const createOrder = async (customer, data) => {
+    const Items = JSON.parse(customer.metadata.cart);
+  
+    const products = Items.map((item) => {
+      return {
+        productId: item.id,
+        quantity: item.cartQuantity,
+      };
+    });
+  
+    const newOrder = new Order({
+      userId: customer.metadata.userId,
+      customerId: data.customer,
+      products,
+      subtotal: data.amount_subtotal,
+      total: data.amount_total,
+      payment_status: data.payment_status,
+    });
+  
+    try {
+      const savedOrder = await newOrder.save();
+      console.log("Processed Order:", savedOrder);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 const endpointSecret = 'whsec_WkHz7siBtaOWjdxLjCPoeepvNvxhH6u0';
 
 app.post(
@@ -55,7 +81,8 @@ app.post(
               const newOrder = new Order({
                 userId: customer.metadata.userId,
                 customerId: checkoutData.customer,
-                products: products,
+                productId: products.productId,
+                quantity: products[0].quantity,
                 subtotal: parseFloat((checkoutData.amount_subtotal / 100).toFixed(2)),
                 total: parseFloat((checkoutData.amount_total / 100).toFixed(2)),
                 payment_status: checkoutData.payment_status,
