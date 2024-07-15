@@ -34,7 +34,6 @@ app.post(
       return;
     }
 
-    // Handle the event
     switch (event.type) {
       case 'payment_intent.succeeded':
         paymentIntentSucceeded = event.data.object;
@@ -42,26 +41,23 @@ app.post(
 
       case 'checkout.session.completed':
         const checkoutData = event.data.object;
-        console.log('Session Completed');
         stripe.customers
           .retrieve(checkoutData.customer)
           .then(async (customer) => {
             try {
               const data = JSON.parse(customer.metadata.cart);
 
-              const products = data.map((item) => {
-                return {
-                  productId: item.id,
-                  quantity: item.cartQuantity,
-                };
-              });
+              const products = data.map((item) => ({
+                productId: item.id,
+                quantity: item.cartQuantity,
+              }));
 
               const newOrder = new Order({
                 userId: customer.metadata.userId,
                 customerId: checkoutData.customer,
                 products: products,
-                subtotal: checkoutData.amount_subtotal / 100,
-                total: checkoutData.amount_total / 100,
+                subtotal: parseFloat((checkoutData.amount_subtotal / 100).toFixed(2)),
+                total: parseFloat((checkoutData.amount_total / 100).toFixed(2)),
                 payment_status: checkoutData.payment_status,
               });
 
@@ -82,10 +78,10 @@ app.post(
         console.log(`Unhandled event type ${event.type}`);
     }
 
-    // Return a 200 response to acknowledge receipt of the event
     response.send();
   }
 );
+
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));

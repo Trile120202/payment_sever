@@ -34,8 +34,16 @@ router.post("/create-checkout-session", async (req, res) => {
     },
   });
 
-  const exchangeRate = 25450;
-
+  const exchangeRate = getExchangeRate;
+  async function getExchangeRate() {
+    try {
+      const response = await axios.get('https://api.exchangerate-api.com/v4/latest/VND');
+      return response.data.rates.USD;
+    } catch (error) {
+      console.error('Error fetching exchange rate:', error);
+      return null;
+    }
+  }
   const line_items = req.body.cartItems.map((item) => {
     return {
       price_data: {
