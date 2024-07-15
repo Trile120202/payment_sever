@@ -35,7 +35,7 @@ router.post("/create-checkout-session", async (req, res) => {
   });
 
   const exchangeRate = 25450;
- 
+
   const line_items = req.body.cartItems.map((item) => {
     return {
       price_data: {
